@@ -22,11 +22,45 @@
  * SOFTWARE.
  */
 
+#ifndef GAME_HPP
+#define GAME_HPP
+
+#include <string>
+
 #include <ncurses.h>
 
-#include "Game.hpp"
+namespace NcursesTest {
 
-int main(int argc, char** argv) {
-    NcursesTest::Game game;
-    return game.run();
+    class Game {
+      public:
+        std::string buffer;
+
+        Game() {
+            initializeNcurses();
+        }
+      
+        void getScreenSize(int& w, int& h) {
+            getmaxyx(stdscr, h, w);
+        }
+
+        int getScreenWidth() {
+            int w = 0, h = 0;
+            getScreenSize(w, h);
+            return w;
+        }
+
+        int getScreenHeight() {
+            int w = 0, h = 0;
+            getScreenSize(w, h);
+            return h;
+        }
+
+      private:
+        void initializeNcurses();
+
+      public:
+        int run();
+    };
 }
+
+#endif

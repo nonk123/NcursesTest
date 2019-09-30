@@ -10,4 +10,5 @@ target_link_libraries(NcursesTest PRIVATE ${CURSES_LIBRARIES})
 target_include_directories(NcursesTest PRIVATE include/ ${CURSES_INCLUDE_DIRS}) 
 target_sources(NcursesTest
     PRIVATE
-        src/main.cpp)
+        src/main.cpp
+        src/Game.cpp)
