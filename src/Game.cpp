@@ -1,5 +1,5 @@
 /*
- * IT License
+ * MIT License
  * 
  * Copyright (c) 2019 nonk123
  * 
@@ -64,7 +64,6 @@ int Game::run() {
         shipY = h / 2;
 
         mvaddstr(0, 0, buffer.c_str());
-        mvaddstr(0, 0, "q to quit");
 
         std::srand(starSeed);
 
@@ -75,6 +74,8 @@ int Game::run() {
                 }
             }
         }
+
+        mvaddstr(0, 0, "q to quit");
 
         std::srand(fumesSeed);
 
