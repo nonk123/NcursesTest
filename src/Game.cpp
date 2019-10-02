@@ -24,9 +24,10 @@
 
 #include "Game.hpp"
 
-#include <ctime>
-#include <vector>
-#include <string>
+#include <ncurses.h>
+
+#include "Viewport.hpp"
+#include "Buffer.hpp"
 
 using namespace NcursesTest;
 
@@ -40,64 +41,59 @@ void Game::initializeNcurses() {
 int Game::run() {
     int code = 0;
 
-    int shipX = 0;
-    int shipY = 0;
-
-    int w = 0;
-    int h = 0;
-
-    const int starSeed = std::time(nullptr);
-    const int fumesSeed = std::time(nullptr);
-
-    const float starDensity = 0.006f;
-    const float fumesDensity = 0.1f;
-
-    const int fps = 5;
+    const int fps = 3;
     timeout(1000 / fps);
 
-    std::string ship("<\\-=-/>");
-    std::vector<std::string> fumes{ "`", "\'", ",", "." };
+    Viewport viewport(150, 40);
+    int x = -40, y = -7;
+
+    Buffer buffer(500, 15);
+
+    buffer.fill(0, 0, 1, 20, '|');
+    buffer.set(10, 10, '*');
+    buffer.fill(20, 0, 1, 20, '|');
+    buffer.set(30, 5, '^');
+    buffer.fill(40, 0, 1, 20, '|');
+    buffer.set(50, 7, '#');
+    buffer.fill(60, 0, 1, 20, '|');
+    buffer.set(70, 6, '(');
+    buffer.fill(80, 0, 1, 20, '|');
+    buffer.set(90, 9, ')');
+    buffer.fill(100, 0, 1, 20, '|');
+    buffer.set(110, 8, '{');
+    buffer.fill(120, 0, 1, 20, '|');
+
+    std::string instructions = "q to quit, hjkl to move";
+    Viewport guiViewport(instructions.length(), 1);
+
+    Buffer guiBuffer(instructions.length(), 1);
+
+    int w = 0, h = 0;
 
     while (true) {
+        viewport.x = x;
+        viewport.y = y;
+
         getScreenSize(w, h);
-        buffer = std::string(w * h, ' ');
-        shipY = h / 2;
+        guiBuffer.setContents(instructions, w, h);
 
-        mvaddstr(0, 0, buffer.c_str());
+        mvaddstr(0, 0, std::string(w * h, ' ').c_str());
 
-        std::srand(starSeed);
+        viewport.draw(stdscr, buffer);
+        guiViewport.draw(stdscr, guiBuffer);
 
-        for (int x = 0; x < w; x++) {
-            for (int y = 0; y < h; y++) {
-                if (static_cast<float>(std::rand()) / RAND_MAX <= starDensity) {
-                    mvaddch(y, x, '*');
-                }
-            }
-        }
+        char c = getch();
 
-        mvaddstr(0, 0, "q to quit");
-
-        std::srand(fumesSeed);
-
-        for (int x = 0; x < shipX; x++) {
-            if (static_cast<float>(std::rand()) / RAND_MAX <= fumesDensity) {
-                mvaddstr(shipY, x, fumes[std::rand() % fumes.size()].c_str());
-            }
-        }
-
-        mvaddstr(shipY, shipX, ship.c_str());
-
-        refresh();
-
-        if (getch() == 'q') {
+        if (c == 'q')
             break;
-        }
-
-        shipX++;
-
-        if (shipX > w - ship.length()) {
-            break;
-        }
+        else if (c == 'k')
+            y -= 5;
+        else if (c == 'j')
+            y += 5;
+        else if (c == 'h')
+            x -= 5;
+        else if (c == 'l')
+            x += 5;
     }
 
     endwin();

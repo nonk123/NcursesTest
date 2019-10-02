@@ -22,41 +22,59 @@
  * SOFTWARE.
  */
 
-#ifndef GAME_HPP
-#define GAME_HPP
+#ifndef BUFFER_HPP
+#define BUFFER_HPP
 
 #include <string>
 
-#include <ncurses.h>
-
 namespace NcursesTest {
-    class Game {
+    const char defaultCharacter = ' ';
+
+    class Buffer {
+      private:
+        std::string contents;
+        int w, h;
+
       public:
-        Game() {
-            initializeNcurses();
-        }
-      
-        void getScreenSize(int& w, int& h) {
-            getmaxyx(stdscr, h, w);
+        Buffer(std::string contents, int w, int h) {
+            setContents(contents, w, h);
         }
 
-        int getScreenWidth() {
-            int w = 0, h = 0;
-            getScreenSize(w, h);
+        Buffer(int w, int h, char fill = defaultCharacter)
+            : Buffer(std::string(w * h, fill), w, h) {
+        }
+
+        std::string getContents() {
+            return contents;
+        }
+
+        void setContents(std::string contents, int w, int h);
+
+        int getWidth() {
             return w;
         }
 
-        int getScreenHeight() {
-            int w = 0, h = 0;
-            getScreenSize(w, h);
+        int getHeight() {
             return h;
         }
 
-      private:
-        void initializeNcurses();
+        bool check(int x, int y) {
+            return x >= 0 && x < w && y >= 0 && y < h;
+        }
 
-      public:
-        int run();
+        void check(std::string& str);
+
+        char get(int x, int y) {
+            return check(x, y) ? contents[x + w * y] : defaultCharacter;
+        }
+
+        char set(int x, int y, char value) {
+            return check(x, y) ? contents[x + w * y] = value : defaultCharacter;
+        }
+
+        void fill(int x, int y, int w, int h, char fill);
+
+        void put(int x, int y, std::string str);
     };
 }
 

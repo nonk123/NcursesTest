@@ -22,41 +22,30 @@
  * SOFTWARE.
  */
 
-#ifndef GAME_HPP
-#define GAME_HPP
+#ifndef VIEWPORT_HPP
+#define VIEWPORT_HPP
 
 #include <string>
 
 #include <ncurses.h>
 
+#include "Buffer.hpp"
+
 namespace NcursesTest {
-    class Game {
+    class Viewport {
       public:
-        Game() {
-            initializeNcurses();
-        }
-      
-        void getScreenSize(int& w, int& h) {
-            getmaxyx(stdscr, h, w);
+        int x = 0, y = 0;
+        int w, h;
+
+        Viewport(int w, int h) : w(w), h(h) {
         }
 
-        int getScreenWidth() {
-            int w = 0, h = 0;
-            getScreenSize(w, h);
-            return w;
+        void center(int x, int y) {
+            this->x = x - w / 2;
+            this->y = y - h / 2;
         }
-
-        int getScreenHeight() {
-            int w = 0, h = 0;
-            getScreenSize(w, h);
-            return h;
-        }
-
-      private:
-        void initializeNcurses();
-
-      public:
-        int run();
+    
+        void draw(WINDOW* window, Buffer buffer);
     };
 }
 

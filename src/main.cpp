@@ -22,8 +22,6 @@
  * SOFTWARE.
  */
 
-#include <ncurses.h>
-
 #include "Game.hpp"
 
 int main(int argc, char** argv) {

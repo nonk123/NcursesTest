@@ -22,42 +22,55 @@
  * SOFTWARE.
  */
 
-#ifndef GAME_HPP
-#define GAME_HPP
+#include "Buffer.hpp"
 
 #include <string>
 
-#include <ncurses.h>
+using namespace NcursesTest;
 
-namespace NcursesTest {
-    class Game {
-      public:
-        Game() {
-            initializeNcurses();
-        }
-      
-        void getScreenSize(int& w, int& h) {
-            getmaxyx(stdscr, h, w);
-        }
+void Buffer::setContents(std::string contents, int w, int h) {
+    this->contents = contents;
+    this->w = w;
+    this->h = h;
 
-        int getScreenWidth() {
-            int w = 0, h = 0;
-            getScreenSize(w, h);
-            return w;
-        }
-
-        int getScreenHeight() {
-            int w = 0, h = 0;
-            getScreenSize(w, h);
-            return h;
-        }
-
-      private:
-        void initializeNcurses();
-
-      public:
-        int run();
-    };
+    check(this->contents);
 }
 
-#endif
+void Buffer::check(std::string& str) {
+    std::string tmp(w * h, ' ');
+
+    if (contents.length() > w * h)
+        for (int i = 0; i < w * h; i++)
+            tmp[i] = contents[i];
+    else if (contents.length() < w * h)
+        for (int i = 0; i < w * h; i++)
+            if (i < contents.length()) tmp[i] = contents[i];
+            else tmp[i] = defaultCharacter;
+    else
+        return;
+
+    str = tmp;
+}
+
+void Buffer::fill(int x, int y, int w, int h, char fill) {
+    for (int i = x; i < x + w; i++)
+        for (int j = y; j < y + h; j++)
+            if (check(i, j))
+                set(i, j, fill);
+}
+
+void Buffer::put(int x, int y, std::string str) {
+    int col = x;
+    int row = y;
+
+    for (int i = 0; i < str.length(); i++) {
+        if (col > w || str[i] == '\n' || str[i] == '\r') {
+            col = x;
+            row++;
+        } else if (row > h) {
+            break;
+        }
+
+        set(col++, row, str[i]);
+    }
+}

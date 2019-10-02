@@ -22,42 +22,22 @@
  * SOFTWARE.
  */
 
-#ifndef GAME_HPP
-#define GAME_HPP
-
-#include <string>
+#include "Viewport.hpp"
 
 #include <ncurses.h>
 
-namespace NcursesTest {
-    class Game {
-      public:
-        Game() {
-            initializeNcurses();
-        }
-      
-        void getScreenSize(int& w, int& h) {
-            getmaxyx(stdscr, h, w);
-        }
+#include <algorithm>
 
-        int getScreenWidth() {
-            int w = 0, h = 0;
-            getScreenSize(w, h);
-            return w;
-        }
+using namespace NcursesTest;
 
-        int getScreenHeight() {
-            int w = 0, h = 0;
-            getScreenSize(w, h);
-            return h;
-        }
+void Viewport::draw(WINDOW* window, Buffer buffer) {
+    int windowW = 0;
+    int windowH = 0;
 
-      private:
-        void initializeNcurses();
+    getmaxyx(window, windowH, windowW);
 
-      public:
-        int run();
-    };
+    for (int i = 0; i < std::min(windowW, w); i++)
+        for (int j = 0; j < std::min(windowH, h); j++)
+            if (buffer.check(x + i, y + j))
+                mvwaddch(window, j, i, buffer.get(x + i, y + j));
 }
-
-#endif

@@ -11,4 +11,6 @@ target_include_directories(NcursesTest PRIVATE include/ ${CURSES_INCLUDE_DIRS})
 target_sources(NcursesTest
     PRIVATE
         src/main.cpp
-        src/Game.cpp)
+        src/Game.cpp
+        src/Buffer.cpp
+        src/Viewport.cpp)
